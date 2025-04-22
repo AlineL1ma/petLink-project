@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Parâmetros para coleira do pet
 const coleiraSchema = 
 new mongoose.Schema({
-    nameColeira:
+    nomeColeira:
     { type: String, required: true},
     rg:
     { type: Number, minlenght: 12, required: true, unique: true},

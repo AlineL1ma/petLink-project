@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Parâmetros para perfil do pet
 const petSchema = 
 new mongoose.Schema({
-    name:
+    nome:
     { type: String, required: true},
     gender:
     { type: String, required: true},

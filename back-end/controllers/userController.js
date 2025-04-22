@@ -4,8 +4,8 @@ const bcrypt = require('bcryptjs');
 // Criar novo usuário
 exports.createUser = async (req, res) => {
     try {
-        const { name, number, email, password } = req.body;
-        const user = new User({ name, number, email, password });
+        const { nome, numero, email, senha } = req.body;
+        const user = new User({ nome, numero, email, senha });
         await user.save();
         res.status(201).json(user);
     } catch (err) {
@@ -38,12 +38,12 @@ exports.getUserById = async (req, res) => {
 
 // Fazer login
 exports.login = async (req, res) => {
-    const { email, number, password } = req.body;
+    const { email, numero, senha } = req.body;
     try {
-        const user = await User.findOne({ email, number });
+        const user = await User.findOne({ email, numero });
         if (!user) return res.status(400).json({ message: 'Usuário não encontrado' });
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(senha, user.senha);
         if (!isMatch) return res.status(400).json({ message: 'Senha incorreta' });
 
         res.status(200).json({ message: 'Login bem-sucedido', user });
@@ -56,9 +56,9 @@ exports.login = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, number, password } = req.body;
+        const { nome, email, numero, senha } = req.body;
 
-        const updatedUser = await User.findByIdAndUpdate(id, { name, email, number, password }, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(id, { nome, email, numero, senha }, { new: true });
         if (!updatedUser) return res.status(404).json({ message: 'Usuário não encontrado' });
 
         res.status(200).json(updatedUser);

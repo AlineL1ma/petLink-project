@@ -1,17 +1,32 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/user', userRoutes);
+
 
 // Parâmetros para parfil do usuário
 const userSchema = 
 new mongoose.Schema({
-    name: 
-    { type: String, required: true },
-    number:
-    { type: Number, required: true, minlength: 11, unique: true },
+    nome: 
+    { type: String, 
+    required: true },
+
+    numero:
+    { type: Number, 
+    required: true, 
+    minlength: 11, 
+    unique: true },
+
     email: 
-    { type: String, required: true, unique: true },
-    password: 
-    { type: String, required: true, minlength: 8, match: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{6,}$/ }
+    { type: String, 
+    required: true, 
+    unique: true },
+
+    senha: 
+    { type: String, 
+    required: true, 
+    minlength: 8, 
+    match: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{6,}$/ }
     //O match garante que a senha tenha ao menos um caractere de cada elemento pedido
 });
 
@@ -24,5 +39,5 @@ userSchema.pre('save', async function (next)
     next();
 });
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+const user = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);

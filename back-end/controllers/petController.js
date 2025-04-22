@@ -3,11 +3,11 @@ const Pet = require('../models/petModel');
 // Adicionar um novo pet
 exports.createPet = async (req, res) => {
     try {
-        const { name, gender, peso, idade, raca, rg, coleira, responsible } 
+        const { nome, gender, peso, idade, raca, rg, coleira, responsible } 
         = req.body;
 
         const pet 
-        = new Pet({ name, gender, peso, idade, raca, rg, coleira, responsible });
+        = new Pet({ nome, gender, peso, idade, raca, rg, coleira, responsible });
         
         await pet.save();
         res.status(201).json(pet);
@@ -19,7 +19,7 @@ exports.createPet = async (req, res) => {
 // Listar pets existentes
 exports.getPet = async (req, res) => {
     try {
-        const pet = await Pet.find().populate('responsible', 'name');
+        const pet = await Pet.find().populate('responsible', 'nome');
         res.status(200).json(pet);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -28,7 +28,7 @@ exports.getPet = async (req, res) => {
 
 exports.getPet = async (req, res) => {
     try {
-        const pet = await Pet.findById(req.params.id).populate('responsible', 'name');
+        const pet = await Pet.findById(req.params.id).populate('responsible', 'nome');
         if (!pet) {
             return res.status(404).json({ message: 'Pet não encontrado' });
         }
@@ -44,11 +44,11 @@ exports.updatePet = async (req, res) => {
         const { id } 
         = req.params;
 
-        const { name, gender, peso, idade, raca, rg, coleira, responsible } 
+        const { nome, gender, peso, idade, raca, rg, coleira, responsible } 
         = req.body;
 
         const updatedPet = await Pet.findByIdAndUpdate
-        (id, { name, gender, peso, idade, raca, rg, coleira, responsible }, { new: true });
+        (id, { nome, gender, peso, idade, raca, rg, coleira, responsible }, { new: true });
         if (!updatedPet) 
             return res.status(404).json({ message: 'Pet não encontrado.' });
 

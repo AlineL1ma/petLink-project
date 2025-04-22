@@ -3,11 +3,11 @@ const Coleira = require('../models/coleiraModel');
 // Cadastrar uma nova coleira
 exports.createColeira = async (req, res) => {
     try {
-        const { nameColeira, rg, id, responsible }
+        const { nomeColeira, rg, id, responsible }
         = req.body;
         
         const coleira = 
-        new Coleira({ nameColeira, rg, id, responsible });
+        new Coleira({ nomeColeira, rg, id, responsible });
 
         await coleira.save();
         res.status(201).json(coleira);
