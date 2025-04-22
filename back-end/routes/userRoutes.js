@@ -23,4 +23,18 @@ router.get('/', async (req, res) => {
   }
 });
 
+const express = require('express');
+const connectDB = require('./database');
+
+const app = express();
+app.use(express.json());
+
+app.post('/user', async (req, res) => {
+  const db = await connectDB();
+  const result = await db.collection('user').insertOne(req.body);
+  res.status(201).send(result);
+});
+
+app.listen(5000, () => console.log('Servidor na porta 5000'));
+
 module.exports = router;
