@@ -6,7 +6,7 @@ new mongoose.Schema({
     nomeColeira:
     { type: String, required: true},
     rg:
-    { type: Number, minlenght: 12, required: true, unique: true},
+    { type: Number, minlength: 12, required: true, unique: true},
     id:
     { type: String, required: true, unique: true},
     responsible: 

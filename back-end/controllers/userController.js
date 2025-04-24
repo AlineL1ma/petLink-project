@@ -1,81 +1,84 @@
-const User = require('../models/user');
+const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Criar novo usuário
 exports.createUser = async (req, res) => {
-    try {
-        const { nome, numero, email, senha } = req.body;
-        const user = new User({ nome, numero, email, senha });
-        await user.save();
-        res.status(201).json(user);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
+  try {
+    const { nome, numero, email, senha } = req.body;
+    const user = new User({ nome, numero, email, senha });
+    await user.save();
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 // Listar todos os usuários
 exports.getUsers = async (req, res) => {
-    try {
-        const users = await User.find();
-        res.status(200).json(users);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 // Buscar um usuário específico por ID
 exports.getUserById = async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
-        }
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
     }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 // Fazer login
 exports.login = async (req, res) => {
-    const { email, numero, senha } = req.body;
-    try {
-        const user = await User.findOne({ email, numero });
-        if (!user) return res.status(400).json({ message: 'Usuário não encontrado' });
+  const { email, senha } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'Usuário não encontrado' });
 
-        const isMatch = await bcrypt.compare(senha, user.senha);
-        if (!isMatch) return res.status(400).json({ message: 'Senha incorreta' });
+    const isMatch = await bcrypt.compare(senha, user.senha);
+    if (!isMatch) return res.status(400).json({ message: 'Senha incorreta' });
 
-        res.status(200).json({ message: 'Login bem-sucedido', user });
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
+    // Gerar token JWT
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ message: 'Login bem-sucedido', token, user });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 // Atualizar usuário
 exports.updateUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { nome, email, numero, senha } = req.body;
+  try {
+    const { id } = req.params;
+    const { nome, email, numero, senha } = req.body;
 
-        const updatedUser = await User.findByIdAndUpdate(id, { nome, email, numero, senha }, { new: true });
-        if (!updatedUser) return res.status(404).json({ message: 'Usuário não encontrado' });
+    const updatedUser = await User.findByIdAndUpdate(id, { nome, email, numero, senha }, { new: true });
+    if (!updatedUser) return res.status(404).json({ message: 'Usuário não encontrado' });
 
-        res.status(200).json(updatedUser);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 // Excluir usuário
 exports.deleteUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deletedUser = await User.findByIdAndDelete(id);
-        if (!deletedUser) return res.status(404).json({ message: 'Usuário não encontrado' });
+  try {
+    const { id } = req.params;
+    const deletedUser = await User.findByIdAndDelete(id);
+    if (!deletedUser) return res.status(404).json({ message: 'Usuário não encontrado' });
 
-        res.status(200).json({ message: 'Usuário excluído com sucesso' });
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
+    res.status(200).json({ message: 'Usuário excluído com sucesso' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };

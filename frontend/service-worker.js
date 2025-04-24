@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petlink-cache-v2'; 
+const CACHE_NAME = 'petlink-cache-v3'; // Alterado para v3 para forçar atualização
 
 const urlsToCache = [
   '/',
@@ -9,6 +9,7 @@ const urlsToCache = [
   '/pages/cadastre-se.html',
   '/styles/cadastre-se.css',
   '/app.js',
+  '/api.js',
   '/pages/cadastro-finalizado.html',
   '/styles/cadastro-finalizado.css',
   '/pages/tela-principal.html',
@@ -69,16 +70,41 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request)
-          .catch(() => {
-            return caches.match('/index.html');
+  // Verifica se a requisição é para uma rota de API
+  if (event.request.url.includes('/api/')) {
+    // Estratégia "network-first" para APIs
+    event.respondWith(
+      fetch(event.request)
+        .then(networkResponse => {
+          // Atualiza o cache com a nova resposta
+          return caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
           });
-      })
-  );
+        })
+        .catch(() => {
+          // Se a rede falhar, tenta buscar do cache
+          return caches.match(event.request)
+            .then(response => {
+              return response || new Response(JSON.stringify({ message: 'Offline: Dados indisponíveis' }), {
+                headers: { 'Content-Type': 'application/json' }
+              });
+            });
+        })
+    );
+  } else {
+    // Estratégia "cache-first" para outros recursos
+    event.respondWith(
+      caches.match(event.request)
+        .then(response => {
+          if (response) {
+            return response;
+          }
+          return fetch(event.request)
+            .catch(() => {
+              return caches.match('/index.html');
+            });
+        })
+    );
+  }
 });
