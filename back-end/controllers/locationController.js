@@ -22,8 +22,6 @@ exports.searchColeira = async (req, res) => {
       return res.status(404).json({ message: 'Coleira não encontrada' });
     }
 
-    // Aqui você pode integrar com um serviço de mapas para obter a localização real
-    // Por enquanto, vamos assumir que a localização está associada a um registro no banco
     const location = await Location.findOne(); // Simulação: buscar uma localização fixa
     if (!location) {
       return res.status(404).json({ message: 'Localização não encontrada' });

@@ -2,28 +2,16 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 // Parâmetros para perfil do usuário
-const userSchema = new mongoose.Schema({
-  nome: { 
-    type: String, 
-    required: true 
-  },
-  numero: { 
-    type: Number, 
-    required: true, 
-    minlength: 11, 
-    unique: true 
-  },
-  email: { 
-    type: String, 
-    required: true, 
-    unique: true 
-  },
-  senha: { 
-    type: String, 
-    required: true, 
-    minlength: 8, 
-    match: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{6,}$/ 
-  }
+const userSchema = 
+new mongoose.Schema({
+  nome: 
+  { type: String, required: true },
+  numero: 
+  { type: Number, required: true, minlength: 11, unique: true },
+  email: 
+  { type: String, required: true, unique: true },
+  senha: 
+  { type: String, required: true, minlength: 8, match: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{6,}$/ }
 });
 
 // Criptografia da senha antes de salvar
